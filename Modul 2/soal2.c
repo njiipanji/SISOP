@@ -26,6 +26,60 @@ void *Prima (void *args)
 	}
 }
 
+void *Thread1 (void *args)
+{
+	int *tanda = (int *) args;
+	FILE *inp, *out;
+	*tanda=1;
+
+	inp = fopen("file1.txt","r");
+	out = fopen("file2.txt","w");
+	char temp;
+
+	while(1)
+	{
+		temp=fgetc(inp);
+		if(temp==EOF) break;
+		else fputc(temp,out);
+	}
+
+	fclose(inp);
+	fclose(out);
+	*tanda=2;
+}
+
+void *Thread2 (void *args)
+{
+	int *tanda = (int *) args;
+	FILE *inp, *out;
+
+	while(1)
+	{
+		if(*tanda==0) continue;
+		else
+		{
+			inp=fopen("file2.txt","r");
+			out=fopen("file3.txt","w");			
+			break;
+		}
+	}
+	char temp;
+
+	while(1)
+	{
+		temp=fgetc(inp);
+		if(temp==EOF)
+		{
+			if(*tanda==1) continue;
+			else break;
+		}
+		else fputc(temp,out);
+	}
+
+	fclose(inp);
+	fclose(out);
+}
+
 void main()
 {
 	int tc;
@@ -46,15 +100,20 @@ void main()
 
 			int *pointer=&n;
 
-			pthread_t t1;
-			pthread_create(&t1,NULL,Prima,(void *)pointer);
-			pthread_join(t1,NULL);
+			pthread_t thread;
+			pthread_create(&thread,NULL,Prima,(void *)pointer);
+			pthread_join(thread,NULL);
 
 			printf("\nJumlah bilangan prima kurang dari %d adalah %d\n",n,counter);
 		}
 		else if(tc==2)
 		{
-			printf("2\n");
+			int tanda=0;
+			pthread_t t1, t2;
+			pthread_create(&t1,NULL,Thread1,&tanda);
+			pthread_create(&t2,NULL,Thread2,&tanda);
+			pthread_join(t1,NULL);
+			pthread_join(t2,NULL);
 		}
 		else if(tc==0)
 		{
