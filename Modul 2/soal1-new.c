@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
+#include <errno.h>
 #define MAX_COMMAND 150
 #define MAX_PARAMETER 10
 
@@ -80,9 +81,20 @@ int executeCommand(char **parameter)
 {
 	pid_t pid = fork();
 
-	if (pid==0) {
+	if (pid==-1) {
+		// menampilkan pesan error jika gagal duplikat/forking
+		char *error=strerror(errno);
+		printf ("fork: %s\n", error);
+		return 1;
+	}
+	else if (pid==0) {
 		// eksekusi perintah
 		execvp(parameter[0], parameter);
+
+		// error message, jika perintah yang diinputkan user tidak ada di folder binary
+		char *error=strerror(errno);
+		printf ("shell: %s: %s\n", parameter[0], error);
+		return 0;
 	}
 	else {
 		if (flag==-1) {
