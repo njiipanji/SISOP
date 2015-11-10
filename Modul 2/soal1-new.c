@@ -13,7 +13,6 @@ int flag=0;
 
 int main (void)
 {
-	char ampersand;
 	char command[MAX_COMMAND+1];
 	char *parameter[MAX_PARAMETER+1];
 	
@@ -28,22 +27,23 @@ int main (void)
 		printf ("%s@myshell> ", username);
 
 		// baca perintah dari input user, CTRL+D->exit program
-		if (fgets(command, sizeof(command), stdin) == NULL) break;
-
-		// menghapus karakter '\n', diubah menjadi karakter '\0'
-		if (command[strlen(command)-1] == '\n') {
-			command[strlen(command)-1] = '\0';
+		if (fgets(command, sizeof(command), stdin) == NULL) {
+			printf("\n");
+			break;
 		}
 		
 		// cek ampersand
-		ampersand=command[strlen(command)-2];
-		if ((int)ampersand == (int)'&') {
+		if ((int)command[strlen(command)-2] == (int)'&') {
 			flag=1;
-			printf ("testing\n");
 			command[strlen(command)-2]='\0';
 		}
 		else {
 			flag=-1;	
+		}
+
+		// menghapus karakter '\n', diubah menjadi karakter '\0'
+		if (command[strlen(command)-1] == '\n') {
+			command[strlen(command)-1] = '\0';
 		}
 
 		// parsing command
