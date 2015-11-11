@@ -2,7 +2,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-int counter=0;
+int counter;
 
 void *Prima (void *args)
 {
@@ -20,7 +20,6 @@ void *Prima (void *args)
 		}
 		if(cek==0)
 		{
-			printf("%d ", p);
 			counter=counter+1;
 		}
 	}
@@ -57,23 +56,14 @@ void *Thread2 (void *args)
 	int *tanda = (int *) args;
 	FILE *inp, *out;
 
-	while(1)
-	{
-		if(*tanda==0) continue;
-		else
-		{
-			inp=fopen("file2.txt","r");
-			out=fopen("file3.txt","w");			
-			break;
-		}
-	}
+	inp = fopen("file2.txt","r");
+	out = fopen("file3.txt","w");
 	char temp;
 
 	while(1)
 	{
 		temp=fgetc(inp);
-		if(temp==EOF)
-		{
+		if(temp==EOF) {
 			if(*tanda==1) continue;
 			else break;
 		}
@@ -98,6 +88,7 @@ void main()
 		if(tc==1)
 		{
 			int n;
+			counter=0;
 
 			printf("Masukkan nilai N: ");
 			scanf("%d",&n);
@@ -108,7 +99,7 @@ void main()
 			pthread_create(&thread,NULL,Prima,(void *)pointer);
 			pthread_join(thread,NULL);
 
-			printf("\nJumlah bilangan prima kurang dari %d adalah %d\n",n,counter);
+			printf("Jumlah bilangan prima kurang dari %d adalah %d\n",n,counter);
 		}
 		else if(tc==2)
 		{
