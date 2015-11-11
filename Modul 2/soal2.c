@@ -24,6 +24,10 @@ void *Prima (void *args)
 			counter=counter+1;
 		}
 	}
+	if(*n<=2)
+	{
+		counter=0;
+	}
 }
 
 void *Thread1 (void *args)
